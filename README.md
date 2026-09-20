@@ -10,30 +10,30 @@ The repository is intentionally **disarmed by default**. It contains no authenti
 
 ## Install
 
-The installer expects a Linux host using systemd and must be run as root. The host must already have the command-line client installed and authenticated. A GitHub checkout requires Git to be installed and network access to GitHub.
+The installer expects a Linux host using systemd and must be run as root. The host must already have the command-line client installed and authenticated.
 
-### 1. Clone the repository
+### 1. Download the release archive
 
-On the target server, run the following commands. For a public repository, no GitHub login is required to clone it:
+The simplest installation does not require Git. On the target server, download the current `main` branch archive, extract it, and enter the extracted directory:
 
 ```sh
-cd /usr/local/src
-git clone git@github.com:rdna897/Codex-window-keeper.git
-cd Codex-window-keeper
+cd /tmp
+curl -fsSL https://github.com/rdna897/Codex-window-keeper/archive/refs/heads/main.tar.gz \
+  -o codex-window-keeper.tar.gz
+tar -xzf codex-window-keeper.tar.gz
+cd Codex-window-keeper-main
 ```
 
-If the server uses a different checkout location, the installer still works because it resolves paths relative to its own directory.
-
-You can verify the checkout before installing:
+Review the files if desired:
 
 ```sh
-git status
-git log -1 --oneline
+ls -la
+sed -n '1,220p' README.md
 ```
 
 ### 2. Install the service and timer
 
-Review the tracked files, then run the installer as root:
+Run the installer as root:
 
 ```sh
 sudo ./install.sh
@@ -45,7 +45,7 @@ When already logged in as root, use:
 ./install.sh
 ```
 
-The installer copies the script to `/usr/local/bin/codex-window-keeper.sh`, installs the systemd units under `/etc/systemd/system/`, installs the defaults file at `/etc/default/codex-window-keeper`, creates `/var/lib/codex-window-keeper` with mode `0700`, reloads systemd, and enables and starts the fifteen-minute timer. It does not copy credentials, quota cache data, or runtime state from the repository.
+The installer copies the script to `/usr/local/bin/codex-window-keeper.sh`, installs the systemd units under `/etc/systemd/system/`, installs the defaults file at `/etc/default/codex-window-keeper`, creates `/var/lib/codex-window-keeper` with mode `0700`, reloads systemd, and enables and starts the fifteen-minute timer. It does not copy credentials, quota cache data, or runtime state from the archive.
 
 The installed defaults keep live triggering disabled:
 
@@ -99,15 +99,39 @@ sudo systemctl is-enabled codex-window-keeper.timer
 sudo journalctl -u codex-window-keeper.service -n 100 --no-pager
 ```
 
-To update a later installation, pull the repository and rerun the installer:
+### Updating without Git
+
+To update an installation later, download a fresh archive and rerun the installer:
 
 ```sh
-cd /usr/local/src/Codex-window-keeper
-sudo git pull --ff-only
+cd /tmp
+curl -fsSL https://github.com/rdna897/Codex-window-keeper/archive/refs/heads/main.tar.gz \
+  -o codex-window-keeper.tar.gz
+tar -xzf codex-window-keeper.tar.gz
+cd Codex-window-keeper-main
 sudo ./install.sh
 ```
 
 The installer is safe to rerun. It refreshes the script and unit files while preserving `/var/lib/codex-window-keeper` and its recorded state.
+
+### Optional Git checkout
+
+Git is useful when you want version tracking and simpler updates. Clone the public repository with:
+
+```sh
+cd /usr/local/src
+git clone https://github.com/rdna897/Codex-window-keeper.git
+cd Codex-window-keeper
+sudo ./install.sh
+```
+
+Update that checkout later with:
+
+```sh
+cd /usr/local/src/Codex-window-keeper
+git pull --ff-only
+sudo ./install.sh
+```
 
 ## Behaviour
 
