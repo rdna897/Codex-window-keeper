@@ -14,7 +14,7 @@ The installer expects a Linux host using systemd and must be run as root. The ho
 
 ### 1. Download the release archive
 
-The simplest installation does not require Git. On the target server, download the current `main` branch archive, extract it, and enter the extracted directory:
+On the target server, download the current `main` branch archive, extract it, and enter the extracted directory:
 
 ```sh
 cd /tmp
