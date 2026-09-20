@@ -1,0 +1,11 @@
+[Unit]
+Description=Check for an expired Codex five-hour window
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+AccuracySec=1min
+Unit=codex-window-keeper.service
+
+[Install]
+WantedBy=timers.target

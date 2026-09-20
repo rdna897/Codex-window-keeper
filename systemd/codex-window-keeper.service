@@ -1,0 +1,17 @@
+[Unit]
+Description=Start the Codex five-hour window after reset
+Wants=network-online.target
+After=network-online.target opencodex.service
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+Environment=HOME=/root
+Environment=CODEX_HOME=/root/.codex
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+EnvironmentFile=-/etc/default/codex-window-keeper
+ExecStart=/usr/local/bin/codex-window-keeper.sh
+TimeoutStartSec=5min
+StandardOutput=journal
+StandardError=journal
